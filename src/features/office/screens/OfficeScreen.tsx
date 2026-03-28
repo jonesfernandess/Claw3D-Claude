@@ -1553,7 +1553,7 @@ export function OfficeScreen({
   const runCompanyBuilderAiTask = useCallback(
     async (prompt: string, statusText: string) => {
       if (status !== "connected") {
-        throw new Error("Connect to OpenClaw before using the company builder.");
+        throw new Error("Connect to Claude before using the company builder.");
       }
       const livePlannerAgent = resolveCompanyPlanningAgent({
         agents: stateRef.current.agents,
@@ -1581,7 +1581,7 @@ export function OfficeScreen({
       try {
         const improvedBrief = await runCompanyBuilderAiTask(
           buildImproveCompanyBriefPrompt(brief),
-          "Improving your company brief with OpenClaw.",
+          "Improving your company brief with Claude.",
         );
         setCompanyBuilderInput((current) => ({
           ...current,
@@ -1608,7 +1608,7 @@ export function OfficeScreen({
       try {
         const response = await runCompanyBuilderAiTask(
           buildGenerateCompanyPlanPrompt(brief),
-          "Generating your AI company structure with OpenClaw.",
+          "Generating your AI company structure with Claude.",
         );
         const parsedPlan = parseCompanyPlanFromAssistantText(response);
         const nextInput: CompanyBuilderInput = {
@@ -1651,7 +1651,7 @@ export function OfficeScreen({
   const handleCreateCompanyFromPlan = useCallback(
     async (params: { input: CompanyBuilderInput; plan: CompanyBuilderPlan }) => {
       if (status !== "connected") {
-        const message = "Connect to OpenClaw before creating the company.";
+        const message = "Connect to Claude before creating the company.";
         setCompanyBuilderError(message);
         throw new Error(message);
       }
@@ -1969,7 +1969,7 @@ export function OfficeScreen({
       );
       if (!agent) return;
       const confirmed = window.confirm(
-        `Delete ${agent.name}? This removes the agent record from OpenClaw and clears its scheduled automations. Claw3D will not touch workspace files.`,
+        `Delete ${agent.name}? This removes the agent record from Claude and clears its scheduled automations. Claw3D will not touch workspace files.`,
       );
       if (!confirmed) return;
 
@@ -3535,7 +3535,7 @@ export function OfficeScreen({
       }
       const transcript = result?.transcript?.trim() ?? "";
       if (!transcript) {
-        throw new Error("OpenClaw returned an empty transcript.");
+        throw new Error("Claude returned an empty transcript.");
       }
       return transcript;
     },
@@ -3804,17 +3804,17 @@ export function OfficeScreen({
         ? "Loading remote office."
         : remoteOfficeAgents.length > 0
           ? `${remoteOfficeAgents.length} agents visible.`
-          : remoteOfficeSourceKind === "openclaw_gateway"
+          : remoteOfficeSourceKind === "claude_gateway"
             ? "Connected to remote gateway. No agents visible yet."
           : remoteOfficeTokenConfigured
             ? "Connected. No agents visible yet."
             : "No agents visible yet.";
   const remoteMessagingAvailable =
-    remoteOfficeSourceKind === "openclaw_gateway" &&
+    remoteOfficeSourceKind === "claude_gateway" &&
     remoteOfficeGatewayUrl.trim().length > 0;
   const remoteMessagingDisabledReason = remoteMessagingAvailable
     ? null
-    : remoteOfficeSourceKind !== "openclaw_gateway"
+    : remoteOfficeSourceKind !== "claude_gateway"
       ? "Remote messaging currently works only with the remote gateway source."
       : remoteOfficeGatewayUrl.trim().length === 0
       ? "Remote messaging requires a remote gateway URL in office settings."
@@ -3879,7 +3879,7 @@ export function OfficeScreen({
         setOpenClawConsoleCopyStatus("idle");
       }, 1800);
     } catch (error) {
-      console.error("Failed to copy OpenClaw console JSON.", error);
+      console.error("Failed to copy Claude console JSON.", error);
       setOpenClawConsoleCopyStatus("error");
       window.setTimeout(() => {
         setOpenClawConsoleCopyStatus("idle");
@@ -3893,7 +3893,7 @@ export function OfficeScreen({
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `openclaw-events-${Date.now()}.json`;
+    anchor.download = `claude-events-${Date.now()}.json`;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
@@ -4381,7 +4381,7 @@ export function OfficeScreen({
       {showOpenClawConsole ? (
         <section className="pointer-events-auto fixed bottom-3 left-3 z-30 flex w-[520px] max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden rounded border border-cyan-500/25 bg-black/78 shadow-2xl backdrop-blur">
           <div className="flex items-center justify-between border-b border-cyan-500/15 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-cyan-200/80">
-            <span>OpenClaw Event Console</span>
+            <span>Claude Event Console</span>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-cyan-100/45">
                 agents {state.agents.length} | events{" "}
@@ -4452,7 +4452,7 @@ export function OfficeScreen({
             {openClawLiveStateMatchesSearch ? (
               <div className="rounded border border-cyan-500/10 bg-cyan-950/10 p-2">
                 <div className="mb-1 text-[9px] uppercase tracking-[0.16em] text-cyan-300/70">
-                  Live OpenClaw State
+                  Live Claude State
                 </div>
                 <pre className="whitespace-pre-wrap break-words text-cyan-100/80">
                   {renderOpenClawHighlightedText(
@@ -4463,17 +4463,17 @@ export function OfficeScreen({
               </div>
             ) : (
               <div className="rounded border border-cyan-500/10 bg-cyan-950/10 p-2 text-cyan-100/45">
-                Live OpenClaw state does not match the current search.
+                Live Claude state does not match the current search.
               </div>
             )}
             <div className="text-[9px] uppercase tracking-[0.16em] text-cyan-300/70">
-              Raw OpenClaw Gateway Events
+              Raw Claude Gateway Events
             </div>
             {filteredOpenClawLogEntries.length === 0 ? (
               <div className="rounded border border-cyan-500/10 bg-cyan-950/10 p-2 text-cyan-100/45">
                 {openClawLogEntries.length === 0
-                  ? "No OpenClaw gateway events received yet."
-                  : "No OpenClaw events match the current search."}
+                  ? "No Claude gateway events received yet."
+                  : "No Claude events match the current search."}
               </div>
             ) : (
               filteredOpenClawLogEntries.map((entry) => {

@@ -3,9 +3,12 @@ const https = require("node:https");
 const next = require("next");
 
 const { createAccessGate } = require("./access-gate");
-const { createGatewayProxy } = require("./gateway-proxy");
 const { assertPublicHostAllowed, resolveHosts } = require("./network-policy");
-const { loadUpstreamGatewaySettings } = require("./studio-settings");
+
+// Claude integration — replaces OpenClaw gateway
+const { createClaudeGatewayProxy } = require("./claude-gateway-proxy");
+const { ClaudeAgentManager } = require("./claude-agent-manager");
+const { loadAgentConfig } = require("./claude-agents-config");
 
 const resolvePort = () => {
   const raw = process.env.PORT?.trim() || "3000";
@@ -88,11 +91,25 @@ async function main() {
     token: process.env.STUDIO_ACCESS_TOKEN,
   });
 
-  const proxy = createGatewayProxy({
-    loadUpstreamSettings: async () => {
-      const settings = loadUpstreamGatewaySettings(process.env);
-      return { url: settings.url, token: settings.token };
-    },
+  // ─── Initialize Claude Agent Manager ────────────────────────────
+  const agentConfig = loadAgentConfig();
+  const agentManager = new ClaudeAgentManager({
+    binaryPath: process.env.CLAUDE_CODE_PATH || undefined,
+    defaultModel: process.env.CLAUDE_MODEL || "claude-haiku-4-5-20251001",
+    workDir: process.env.WORK_DIR || process.cwd(),
+  });
+
+  // Register all configured agents
+  for (const agentDef of agentConfig.agents) {
+    agentManager.registerAgent(agentDef);
+  }
+
+  console.log(`\n🤖 Claude Agent Manager initialized with ${agentConfig.agents.length} agents`);
+  console.log(`   Model: ${process.env.CLAUDE_MODEL || "claude-haiku-4-5-20251001"}`);
+  console.log(`   Agents: ${agentConfig.agents.map((a) => a.name).join(", ")}\n`);
+
+  const proxy = createClaudeGatewayProxy({
+    agentManager,
     allowWs: (req) => {
       if (resolvePathname(req.url) !== "/api/gateway/ws") return false;
       return true;
@@ -179,6 +196,15 @@ async function main() {
     console.info("HTTPS mode: self-signed cert in use. You may need to accept a browser security warning once.");
     console.info(`Spotify redirect URI: ${browserUrl}/office`);
   }
+
+  // Graceful shutdown
+  const shutdown = () => {
+    console.log("\nShutting down...");
+    agentManager.shutdown();
+    process.exit(0);
+  };
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
 }
 
 main().catch((err) => {

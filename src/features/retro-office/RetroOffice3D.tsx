@@ -2402,7 +2402,7 @@ export function RetroOffice3D({
   officeTitle?: string;
   officeTitleLoaded?: boolean;
   remoteOfficeEnabled?: boolean;
-  remoteOfficeSourceKind?: "presence_endpoint" | "openclaw_gateway";
+  remoteOfficeSourceKind?: "presence_endpoint" | "claude_gateway";
   remoteOfficeLabel?: string;
   remoteOfficePresenceUrl?: string;
   remoteOfficeGatewayUrl?: string;
@@ -2416,7 +2416,7 @@ export function RetroOffice3D({
   onOfficeTitleChange?: (title: string) => void;
   onRemoteOfficeEnabledChange?: (enabled: boolean) => void;
   onRemoteOfficeSourceKindChange?: (
-    kind: "presence_endpoint" | "openclaw_gateway",
+    kind: "presence_endpoint" | "claude_gateway",
   ) => void;
   onRemoteOfficeLabelChange?: (label: string) => void;
   onRemoteOfficePresenceUrlChange?: (url: string) => void;
@@ -4434,7 +4434,7 @@ export function RetroOffice3D({
         setManualPhoneCallScenario(
           buildMockPhoneCallScenario({
             callee: "my contact",
-            message: "This is a demo call from the OpenClaw phone booth.",
+            message: "This is a demo call from the Claude phone booth.",
             voiceAvailable:
               voiceRepliesLoaded &&
               Boolean(voiceRepliesVoiceId) &&

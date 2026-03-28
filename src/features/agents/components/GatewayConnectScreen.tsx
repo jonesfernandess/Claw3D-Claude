@@ -24,7 +24,7 @@ const resolveLocalGatewayPort = (gatewayUrl: string): number => {
     const port = Number(parsed.port);
     if (Number.isFinite(port) && port > 0) return port;
   } catch {}
-  return 18789;
+  return 3000;
 };
 
 export const GatewayConnectScreen = ({
@@ -44,19 +44,15 @@ export const GatewayConnectScreen = ({
   const isLocal = useMemo(() => isLocalGatewayUrl(gatewayUrl), [gatewayUrl]);
   const localPort = useMemo(() => resolveLocalGatewayPort(gatewayUrl), [gatewayUrl]);
   const localGatewayCommand = useMemo(
-    () => `npx openclaw gateway run --bind loopback --port ${localPort} --verbose`,
-    [localPort]
-  );
-  const localGatewayCommandPnpm = useMemo(
-    () => `pnpm openclaw gateway run --bind loopback --port ${localPort} --verbose`,
-    [localPort]
+    () => `npm run dev`,
+    []
   );
   const statusCopy = useMemo(() => {
     if (status === "connecting" && isLocal) {
-      return `Local gateway detected on port ${localPort}. Connecting…`;
+      return `Connecting to local Claude gateway on port ${localPort}…`;
     }
     if (status === "connecting") {
-      return "Connecting to remote gateway…";
+      return "Connecting to gateway…";
     }
     if (isLocal) {
       return "No local gateway found.";
@@ -105,7 +101,7 @@ export const GatewayConnectScreen = ({
         <p className="ui-text-danger text-xs">Could not copy command.</p>
       ) : (
         <p className="text-xs leading-snug text-muted-foreground">
-          In a source checkout, use <span className="font-mono text-foreground">{localGatewayCommandPnpm}</span>.
+          Run this command in the Claw3D project directory.
         </p>
       )}
     </div>
@@ -114,26 +110,19 @@ export const GatewayConnectScreen = ({
   const remoteForm = (
     <div className="mt-2.5 flex flex-col gap-3">
       <label className="flex flex-col gap-1 text-[11px] font-medium text-foreground/90">
-        Upstream URL
+        Gateway URL
         <input
           className="ui-input h-10 rounded-md px-4 font-sans text-sm text-foreground outline-none"
           type="text"
           value={gatewayUrl}
           onChange={(event) => onGatewayUrlChange(event.target.value)}
-          placeholder="wss://your-gateway.example.com"
+          placeholder="ws://localhost:3000/api/gateway/ws"
           spellCheck={false}
         />
       </label>
 
-      <div className="space-y-0.5 text-xs text-muted-foreground">
-        <p className="font-medium text-foreground">Using Tailscale?</p>
-        <p>
-          URL: <span className="font-mono">wss://&lt;your-tailnet-host&gt;</span>
-        </p>
-      </div>
-
       <label className="flex flex-col gap-1 text-[11px] font-medium text-foreground/90">
-        Upstream token
+        Token
         <div className="relative">
           <input
             className="ui-input h-10 w-full rounded-md px-4 pr-10 font-sans text-sm text-foreground outline-none"
@@ -177,12 +166,8 @@ export const GatewayConnectScreen = ({
       {showApprovalHint ? (
         <div className="rounded-md border border-border bg-muted/40 px-3 py-3 text-xs text-muted-foreground">
           <p className="leading-snug">
-            If the first connection attempt did not work, go to your OpenClaw computer and approve this
-            device:
+            Make sure the Claw3D server is running. Start it with <code className="font-mono">npm run dev</code> in the project directory.
           </p>
-          <code className="mt-2 block overflow-x-auto whitespace-nowrap rounded-md bg-[var(--command-bg)] px-2.5 py-2 font-mono text-[11px] text-[var(--command-fg)]">
-            openclaw devices approve --latest
-          </code>
         </div>
       ) : null}
     </div>
@@ -206,9 +191,9 @@ export const GatewayConnectScreen = ({
       <div className="ui-card px-4 py-5 sm:px-6">
         <div>
           <p className="font-mono text-[10px] font-medium tracking-[0.06em] text-muted-foreground">
-            Remote gateway (recommended)
+            Gateway connection
           </p>
-          <p className="mt-2 text-sm text-foreground/90">Default: enter your URL and token to connect.</p>
+          <p className="mt-2 text-sm text-foreground/90">Enter the gateway URL and token to connect.</p>
         </div>
         {remoteForm}
       </div>
@@ -216,10 +201,10 @@ export const GatewayConnectScreen = ({
       <div className="ui-card px-4 py-4 sm:px-6 sm:py-5">
         <div className="space-y-1.5">
           <p className="font-mono text-[10px] font-semibold tracking-[0.06em] text-muted-foreground">
-            Run locally (optional)
+            Run locally
           </p>
           <p className="text-sm text-foreground/90">
-            Start a local gateway process on this machine, then connect.
+            Start the local Claude gateway server, then connect.
           </p>
         </div>
         <div className="mt-3 space-y-3">
@@ -228,7 +213,7 @@ export const GatewayConnectScreen = ({
             <div className="ui-input rounded-md px-3 py-3">
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">
-                  Use token from <span className="font-mono">~/.openclaw/openclaw.json</span>.
+                  Local gateway detected.
                 </p>
                 <p className="font-mono text-[11px] text-foreground">
                   {localGatewayDefaults.url}

@@ -194,7 +194,7 @@ export function CompanyBuilderModal({
             </div>
             <h2 className="mt-1 text-lg font-semibold">Design an AI company from one prompt</h2>
             <p className="mt-1 text-sm text-white/55">
-              Uses your connected OpenClaw runtime
+              Uses your connected Claude runtime
               {plannerAgentName ? ` via ${plannerAgentName}.` : "."}
             </p>
           </div>

@@ -5,19 +5,19 @@ import { CheckCircle2, ExternalLink } from "lucide-react";
 
 const prerequisites = [
   {
-    label: "OpenClaw installed",
-    detail: "Install via npm, pnpm, or from source",
-    link: "https://docs.openclaw.ai",
-    linkLabel: "Installation docs",
+    label: "Claw3D server running",
+    detail: "Start the local server with npm run dev",
+    command: "npm run dev",
   },
   {
-    label: "Gateway running",
-    detail: "Start with: openclaw gateway start",
-    command: "openclaw gateway start",
+    label: "Claude Code installed",
+    detail: "Required for AI agent capabilities",
+    link: "https://docs.anthropic.com/en/docs/claude-code",
+    linkLabel: "Claude Code docs",
   },
   {
     label: "Gateway URL and token",
-    detail: "Found in ~/.openclaw/openclaw.json or your remote setup",
+    detail: "Configured in ~/.claw3d-claude/claw3d/settings.json or .env file",
   },
   {
     label: "Node.js 20+",
@@ -31,7 +31,7 @@ export const PrerequisitesStep = () => (
   <div className="space-y-2.5">
     <p className="text-[13px] leading-5 text-white/70">
       Make sure you have these ready before connecting. If you already have
-      OpenClaw running, you can skip this step.
+      the server running, you can skip this step.
     </p>
 
     <div className="space-y-1.5">
@@ -66,23 +66,14 @@ export const PrerequisitesStep = () => (
     </div>
 
     <p className="text-[10px] leading-4 text-white/40">
-      Need help? Check{" "}
+      Need help? Check the{" "}
       <a
-        href="https://docs.openclaw.ai"
+        href="https://github.com/jonesfernandess/Claw3D-Claude"
         target="_blank"
         rel="noopener noreferrer"
         className="text-amber-300/70 hover:text-amber-200"
       >
-        docs.openclaw.ai
-      </a>{" "}
-      or{" "}
-      <a
-        href="https://discord.com/invite/clawd"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-amber-300/70 hover:text-amber-200"
-      >
-        join Discord
+        project repository
       </a>
       .
     </p>

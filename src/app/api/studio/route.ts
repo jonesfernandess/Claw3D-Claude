@@ -23,7 +23,7 @@ export async function GET() {
     return NextResponse.json(
       {
         settings: sanitizeStudioSettings(settings),
-        localGatewayDefaults: sanitizeStudioGatewaySettings(localGatewayDefaults),
+        localGatewayDefaults: localGatewayDefaults,
       },
       { headers: { "Cache-Control": "no-store" } }
     );

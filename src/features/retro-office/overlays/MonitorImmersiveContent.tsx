@@ -312,7 +312,7 @@ export function MonitorImmersiveContent({
             <span className="h-3 w-3 rounded-full bg-[#28c840]" />
           </div>
           <div className="text-[12px] font-medium text-white/65">
-            openclaw-control-center
+            claude-control-center
           </div>
           <div className="flex items-center gap-2 text-[11px] text-white/40">
             <span>[v]</span>

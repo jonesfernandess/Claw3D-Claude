@@ -2,8 +2,8 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 
-const LEGACY_STATE_DIRNAMES = [".clawdbot", ".moltbot"];
-const NEW_STATE_DIRNAME = ".openclaw";
+const LEGACY_STATE_DIRNAMES = [".openclaw", ".clawdbot", ".moltbot"];
+const NEW_STATE_DIRNAME = ".claw3d-claude";
 
 const resolveUserPath = (input) => {
   const trimmed = String(input ?? "").trim();
@@ -57,7 +57,7 @@ const readJsonFile = (filePath) => {
 };
 
 const DEFAULT_GATEWAY_URL = "ws://localhost:18789";
-const OPENCLAW_CONFIG_FILENAME = "openclaw.json";
+const OPENCLAW_CONFIG_FILENAME = "config.json";
 
 const isRecord = (value) => Boolean(value && typeof value === "object");
 

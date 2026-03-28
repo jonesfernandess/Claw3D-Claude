@@ -53,9 +53,14 @@ const resolveAndValidateLocalMediaPath = (raw: string): { resolved: string; mime
 
   const resolved = path.resolve(expanded);
 
-  const allowedRoot = path.join(os.homedir(), ".openclaw");
+  const allowedRoot = path.join(os.homedir(), ".claw3d-claude");
+  const legacyRoot = path.join(os.homedir(), ".openclaw");
   const allowedPrefix = `${allowedRoot}${path.sep}`;
-  if (!(resolved === allowedRoot || resolved.startsWith(allowedPrefix))) {
+  const legacyPrefix = `${legacyRoot}${path.sep}`;
+  const isAllowed =
+    resolved === allowedRoot || resolved.startsWith(allowedPrefix) ||
+    resolved === legacyRoot || resolved.startsWith(legacyPrefix);
+  if (!isAllowed) {
     throw new Error(`Refusing to read media outside ${allowedRoot}`);
   }
 
@@ -69,15 +74,18 @@ const validateRemoteMediaPath = (raw: string): { remotePath: string; mime: strin
     throw new Error("path must be absolute or start with ~/");
   }
 
-  // Remote side enforces ~/.openclaw; this guard lets Studio on macOS request
-  // /home/ubuntu/.openclaw/... without tripping local homedir checks.
+  // Remote side enforces ~/.claw3d-claude; this guard lets Studio on macOS request
+  // /home/ubuntu/.claw3d-claude/... without tripping local homedir checks.
   const normalized = trimmed.replaceAll("\\\\", "/");
-  const inOpenclaw =
+  const inAllowedDir =
+    normalized === "~/.claw3d-claude" ||
+    normalized.startsWith("~/.claw3d-claude/") ||
+    normalized.includes("/.claw3d-claude/") ||
     normalized === "~/.openclaw" ||
     normalized.startsWith("~/.openclaw/") ||
     normalized.includes("/.openclaw/");
-  if (!inOpenclaw) {
-    throw new Error("Refusing to read remote media outside ~/.openclaw");
+  if (!inAllowedDir) {
+    throw new Error("Refusing to read remote media outside ~/.claw3d-claude");
   }
 
   return { remotePath: trimmed, mime };
